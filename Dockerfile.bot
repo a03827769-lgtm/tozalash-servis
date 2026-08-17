@@ -1,0 +1,25 @@
+FROM python:3.11-slim
+
+# OS updates and dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Install pip requirements
+# We will generate requirements.txt first if it doesn't exist, but we assume it's copied
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy source code
+COPY . .
+
+# Environment settings
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONIOENCODING=utf-8
+
+# Run main script
+CMD ["python", "main.py"]

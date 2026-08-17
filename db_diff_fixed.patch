@@ -1,0 +1,921 @@
+diff --git a/database.py b/database.py
+index fd04539..945eed5 100644
+--- a/database.py
++++ b/database.py
+@@ -1,17 +1,19 @@
+ """
+ Tozalash Servis — Ma'lumotlar Bazasi Moduli (ASYNC)
+-aiomysql orqali MySQL bilan ishlash
++aiosqlite bilan 10,000+ so'rovlarni qotmasdan bajarish
+ """
+ import aiomysql
+ import os
+ import json
++import asyncio
+ import contextlib
+-import secrets
+-import string
+ from datetime import datetime
+-from typing import Optional, List, Dict
++from pathlib import Path
++from typing import Optional, List, Dict, Any
+ from loguru import logger
+ 
++from config import DATABASE_PATH
++
+ class Database:
+     """Asosiy ma'lumotlar bazasi klassi (Async)"""
+     
+@@ -23,6 +25,7 @@ class Database:
+         self.db_name = os.getenv("DB_DATABASE", "tozalash_db")
+         self.pool = None
+ 
++    
+     @contextlib.asynccontextmanager
+     async def get_conn(self):
+         if self.pool is None:
+@@ -40,395 +43,393 @@ class Database:
+         """Barcha jadvallarni asinxron yaratish"""
+         async with self.get_conn() as conn:
+             async with conn.cursor() as cursor:
+-                # MIJOZLAR
+-                await cursor.execute("""
+-                    CREATE TABLE IF NOT EXISTS clients (
+-                        id INTEGER PRIMARY KEY AUTO_INCREMENT,
+-                        telegram_id VARCHAR(255) UNIQUE,
+-                        name VARCHAR(255),
+-                        phone VARCHAR(255),
+-                        language VARCHAR(10) DEFAULT 'uz',
+-                        city VARCHAR(255) DEFAULT 'Toshkent',
+-                        total_orders INTEGER DEFAULT 0,
+-                        total_spent DOUBLE DEFAULT 0,
+-                        rating DOUBLE DEFAULT 5.0,
+-                        churn_risk DOUBLE DEFAULT 0.0,
+-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+-                        last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+-                        notes TEXT,
+-                        referral_code VARCHAR(20) UNIQUE,
+-                        referred_by INTEGER,
+-                        loyalty_points INTEGER DEFAULT 0,
+-                        gold_status_notified BOOLEAN DEFAULT FALSE,
+-                        FOREIGN KEY(referred_by) REFERENCES clients(id) ON DELETE SET NULL
+-                    )
+-                """)
+-                # BUYURTMALAR
+-                await cursor.execute("""
+-                    CREATE TABLE IF NOT EXISTS orders (
+-                        id INTEGER PRIMARY KEY AUTO_INCREMENT,
+-                        order_number VARCHAR(255) UNIQUE,
+-                        client_id INTEGER,
+-                        client_telegram_id VARCHAR(255),
+-                        service_type VARCHAR(255),
+-                        service_name VARCHAR(255),
+-                        quantity DOUBLE,
+-                        unit VARCHAR(50),
+-                        price_per_unit DOUBLE,
+-                        surge_multiplier DOUBLE DEFAULT 1.0,
+-                        total_price DOUBLE,
+-                        address TEXT,
+-                        scheduled_date VARCHAR(50),
+-                        scheduled_time VARCHAR(50),
+-                        status VARCHAR(50) DEFAULT 'yangi',
+-                        worker_ids TEXT,
+-                        worker_names TEXT,
+-                        before_photo TEXT,
+-                        after_photo TEXT,
+-                        qa_approved INTEGER DEFAULT 0,
+-                        payment_method VARCHAR(50),
+-                        payment_status VARCHAR(50) DEFAULT 'kutilmoqda',
+-                        notes TEXT,
+-                        is_eco_friendly BOOLEAN DEFAULT FALSE,
+-                        custom_checklist TEXT,
+-                        lat DOUBLE,
+-                        lng DOUBLE,
+-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+-                        completed_at TIMESTAMP NULL,
+-                        FOREIGN KEY (client_id) REFERENCES clients(id)
+-                    )
+-                """)
+-                # ISHCHILAR
+-                await cursor.execute("""
+-                    CREATE TABLE IF NOT EXISTS workers (
+-                        id INTEGER PRIMARY KEY AUTO_INCREMENT,
+-                        name VARCHAR(255) NOT NULL,
+-                        phone VARCHAR(255),
+-                        telegram_id VARCHAR(255) UNIQUE,
+-                        telegram_username VARCHAR(255),
+-                        specialization VARCHAR(255),
+-                        is_active INTEGER DEFAULT 1,
+-                        is_available INTEGER DEFAULT 1,
+-                        total_jobs INTEGER DEFAULT 0,
+-                        monthly_salary DOUBLE DEFAULT 0,
+-                        balance DOUBLE DEFAULT 0,
+-                        rating DOUBLE DEFAULT 5.0,
+-                        gps_lat DOUBLE,
+-                        gps_lon DOUBLE,
+-                        last_location_update TIMESTAMP NULL,
+-                        joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+-                        notes TEXT
+-                    )
+-                """)
+-                # MOLIYA
+-                await cursor.execute("""
+-                    CREATE TABLE IF NOT EXISTS finance (
+-                        id INTEGER PRIMARY KEY AUTO_INCREMENT,
+-                        type VARCHAR(50),
+-                        category VARCHAR(255),
+-                        amount DOUBLE,
+-                        description TEXT,
+-                        order_id INTEGER,
+-                        date VARCHAR(50),
+-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-                    )
+-                """)
+-                # AI O'RGANISH
+-                await cursor.execute("""
+-                    CREATE TABLE IF NOT EXISTS ai_learning (
+-                        id INTEGER PRIMARY KEY AUTO_INCREMENT,
+-                        context_type VARCHAR(255),
+-                        input_data TEXT,
+-                        output_data TEXT,
+-                        success INTEGER,
+-                        feedback_score DOUBLE,
+-                        improvement TEXT,
+-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-                    )
+-                """)
+-                # KANAL POSTLARI
+-                await cursor.execute("""
+-                    CREATE TABLE IF NOT EXISTS channel_posts (
+-                        id INTEGER PRIMARY KEY AUTO_INCREMENT,
+-                        platform VARCHAR(50),
+-                        content TEXT,
+-                        media_url TEXT,
+-                        post_type VARCHAR(50),
+-                        scheduled_at TIMESTAMP NULL,
+-                        posted_at TIMESTAMP NULL,
+-                        status VARCHAR(50) DEFAULT 'kutilmoqda',
+-                        engagement_data TEXT,
+-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-                    )
+-                """)
+-                # RAQIBLAR
+-                await cursor.execute("""
+-                    CREATE TABLE IF NOT EXISTS competitors (
+-                        id INTEGER PRIMARY KEY AUTO_INCREMENT,
+-                        name VARCHAR(255),
+-                        platform VARCHAR(50),
+-                        url VARCHAR(255),
+-                        phone VARCHAR(255),
+-                        services TEXT,
+-                        price_info TEXT,
+-                        followers_count INTEGER,
+-                        last_post_date VARCHAR(50),
+-                        strengths TEXT,
+-                        weaknesses TEXT,
+-                        checked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-                    )
+-                """)
+-                # KUNLIK HISOBOTLAR
+-                await cursor.execute("""
+-                    CREATE TABLE IF NOT EXISTS daily_reports (
+-                        id INTEGER PRIMARY KEY AUTO_INCREMENT,
+-                        report_date VARCHAR(50) UNIQUE,
+-                        orders_count INTEGER DEFAULT 0,
+-                        completed_orders INTEGER DEFAULT 0,
+-                        total_revenue DOUBLE DEFAULT 0,
+-                        new_clients INTEGER DEFAULT 0,
+-                        messages_received INTEGER DEFAULT 0,
+-                        messages_answered INTEGER DEFAULT 0,
+-                        ai_improvements TEXT,
+-                        competitor_insights TEXT,
+-                        tomorrow_plan TEXT,
+-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-                    )
+-                """)
+-                # SUHBAT TARIXI
++                # ================================================
++                # MIJOZLAR JADVALI (+ Churn & Promo)
++                # ================================================
+                 await cursor.execute("""
+-                    CREATE TABLE IF NOT EXISTS conversations (
+-                        id INTEGER PRIMARY KEY AUTO_INCREMENT,
+-                        telegram_id VARCHAR(255),
+-                        platform VARCHAR(50) DEFAULT 'telegram',
+-                        role VARCHAR(50),
+-                        message TEXT,
+-                        state VARCHAR(255),
+-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-                    )
+-                """)
+-                # FOYDALANUVCHI HOLATLARI
+-                await cursor.execute("""
+-                    CREATE TABLE IF NOT EXISTS user_states (
+-                        telegram_id VARCHAR(255) PRIMARY KEY,
+-                        state VARCHAR(255) DEFAULT 'idle',
+-                        context TEXT,
+-                        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+-                    )
+-                """)
+-                # Migrate existing orders table
+-                try:
+-                    await cursor.execute("ALTER TABLE orders ADD COLUMN is_eco_friendly BOOLEAN DEFAULT FALSE")
+-                    await cursor.execute("ALTER TABLE orders ADD COLUMN custom_checklist TEXT")
+-                except Exception:
+-                    pass
+-            logger.info("✅ Ma'lumotlar bazasi (aiomysql) muvaffaqiyatli ishga tushirildi")
+-
++                CREATE TABLE IF NOT EXISTS clients (
++                    id INTEGER PRIMARY KEY AUTO_INCREMENT,
++                    telegram_id TEXT UNIQUE,
++                    name TEXT,
++                    phone TEXT,
++                    language TEXT DEFAULT 'uz',
++                    city TEXT DEFAULT 'Toshkent',
++                    total_orders INTEGER DEFAULT 0,
++                    total_spent REAL DEFAULT 0,
++                    rating REAL DEFAULT 5.0,
++                    churn_risk REAL DEFAULT 0.0,
++                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
++                    last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
++                    notes TEXT
++                )
++            """)
++            
++            # ================================================
++            # BUYURTMALAR JADVALI (+ QA & Surge Pricing)
++            # ================================================
++            await cursor.execute("""
++                CREATE TABLE IF NOT EXISTS orders (
++                    id INTEGER PRIMARY KEY AUTO_INCREMENT,
++                    order_number TEXT UNIQUE,
++                    client_id INTEGER,
++                    client_telegram_id TEXT,
++                    service_type TEXT,
++                    service_name TEXT,
++                    quantity REAL,
++                    unit TEXT,
++                    price_per_unit REAL,
++                    surge_multiplier REAL DEFAULT 1.0,
++                    total_price REAL,
++                    address TEXT,
++                    scheduled_date TEXT,
++                    scheduled_time TEXT,
++                    status TEXT DEFAULT 'yangi',
++                    worker_ids TEXT,
++                    worker_names TEXT,
++                    before_photo TEXT,
++                    after_photo TEXT,
++                    qa_approved INTEGER DEFAULT 0,
++                    payment_method TEXT,
++                    payment_status TEXT DEFAULT 'kutilmoqda',
++                    notes TEXT,
++                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
++                    completed_at TIMESTAMP,
++                    FOREIGN KEY (client_id) REFERENCES clients(id)
++                )
++            """)
++            
++            # ================================================
++            # ISHCHILAR JADVALI (+ GPS Lokatsiya)
++            # ================================================
++            await cursor.execute("""
++                CREATE TABLE IF NOT EXISTS workers (
++                    id INTEGER PRIMARY KEY AUTO_INCREMENT,
++                    name TEXT NOT NULL,
++                    phone TEXT,
++                    telegram_id TEXT UNIQUE,
++                    telegram_username TEXT,
++                    specialization TEXT,
++                    is_active INTEGER DEFAULT 1,
++                    is_available INTEGER DEFAULT 1,
++                    total_jobs INTEGER DEFAULT 0,
++                    monthly_salary REAL DEFAULT 0,
++                    balance REAL DEFAULT 0,
++                    rating REAL DEFAULT 5.0,
++                    gps_lat REAL,
++                    gps_lon REAL,
++                    last_location_update TIMESTAMP,
++                    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
++                    notes TEXT
++                )
++            """)
++            
++            # ================================================
++            # MOLIYA JADVALI
++            # ================================================
++            await cursor.execute("""
++                CREATE TABLE IF NOT EXISTS finance (
++                    id INTEGER PRIMARY KEY AUTO_INCREMENT,
++                    type TEXT,
++                    category TEXT,
++                    amount REAL,
++                    description TEXT,
++                    order_id INTEGER,
++                    date TEXT,
++                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
++                )
++            """)
++            
++            # ================================================
++            # AI O'RGANISH JADVALI
++            # ================================================
++            await cursor.execute("""
++                CREATE TABLE IF NOT EXISTS ai_learning (
++                    id INTEGER PRIMARY KEY AUTO_INCREMENT,
++                    context_type TEXT,
++                    input_data TEXT,
++                    output_data TEXT,
++                    success INTEGER,
++                    feedback_score REAL,
++                    improvement TEXT,
++                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
++                )
++            """)
++            
++            # ================================================
++            # KANAL POSTLARI JADVALI
++            # ================================================
++            await cursor.execute("""
++                CREATE TABLE IF NOT EXISTS channel_posts (
++                    id INTEGER PRIMARY KEY AUTO_INCREMENT,
++                    platform TEXT,
++                    content TEXT,
++                    media_url TEXT,
++                    post_type TEXT,
++                    scheduled_at TIMESTAMP,
++                    posted_at TIMESTAMP,
++                    status TEXT DEFAULT 'kutilmoqda',
++                    engagement_data TEXT,
++                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
++                )
++            """)
++            
++            # ================================================
++            # RAQIBLAR JADVALI
++            # ================================================
++            await cursor.execute("""
++                CREATE TABLE IF NOT EXISTS competitors (
++                    id INTEGER PRIMARY KEY AUTO_INCREMENT,
++                    name TEXT,
++                    platform TEXT,
++                    url TEXT,
++                    phone TEXT,
++                    services TEXT,
++                    price_info TEXT,
++                    followers_count INTEGER,
++                    last_post_date TEXT,
++                    strengths TEXT,
++                    weaknesses TEXT,
++                    checked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
++                )
++            """)
++            
++            # ================================================
++            # KUNLIK HISOBOTLAR
++            # ================================================
++            await cursor.execute("""
++                CREATE TABLE IF NOT EXISTS daily_reports (
++                    id INTEGER PRIMARY KEY AUTO_INCREMENT,
++                    report_date TEXT UNIQUE,
++                    orders_count INTEGER DEFAULT 0,
++                    completed_orders INTEGER DEFAULT 0,
++                    total_revenue REAL DEFAULT 0,
++                    new_clients INTEGER DEFAULT 0,
++                    messages_received INTEGER DEFAULT 0,
++                    messages_answered INTEGER DEFAULT 0,
++                    ai_improvements TEXT,
++                    competitor_insights TEXT,
++                    tomorrow_plan TEXT,
++                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
++                )
++            """)
++            
++            # ================================================
++            # SUHBAT TARIXI (Conversation History)
++            # ================================================
++            await cursor.execute("""
++                CREATE TABLE IF NOT EXISTS conversations (
++                    id INTEGER PRIMARY KEY AUTO_INCREMENT,
++                    telegram_id TEXT,
++                    platform TEXT DEFAULT 'telegram',
++                    role TEXT,
++                    message TEXT,
++                    state TEXT,
++                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
++                )
++            """)
++            
++            # ================================================
++            # FOYDALANUVCHI HOLATLARI (User States)
++            # ================================================
++            await cursor.execute("""
++                CREATE TABLE IF NOT EXISTS user_states (
++                    telegram_id TEXT PRIMARY KEY,
++                    state TEXT DEFAULT 'idle',
++                    context TEXT,
++                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
++                )
++            """)
++            
++            await conn.commit()
++            logger.info("✅ Ma'lumotlar bazasi (aiosqlite) muvaffaqiyatli ishga tushirildi")
++    
+     # ================================================
+     # MIJOZLAR METODLARI
+     # ================================================
+-    async def get_or_create_client(self, telegram_id: str, name: str = None, language: str = 'uz', referrer_code: str = None) -> Dict:
++    async def get_or_create_client(self, telegram_id: str, name: str = None, language: str = 'uz') -> Dict:
+         async with self.get_conn() as conn:
+             async with conn.cursor() as cursor:
+                 await cursor.execute("SELECT * FROM clients WHERE telegram_id = %s", (str(telegram_id),))
+                 client = await cursor.fetchone()
+-                
+-                if client:
+-                    await cursor.execute(
+-                        "UPDATE clients SET last_activity = %s WHERE telegram_id = %s",
+-                        (datetime.now(), str(telegram_id))
+-                    )
+-                    return dict(client)
+-                else:
+-                    # Generate a unique referral code
+-                    my_referral_code = ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(6))
+-                    
+-                    referred_by_id = None
+-                    if referrer_code:
+-                        await cursor.execute("SELECT id FROM clients WHERE referral_code = %s", (referrer_code,))
+-                        referrer = await cursor.fetchone()
+-                        if referrer:
+-                            referred_by_id = referrer['id']
+-                            # Optionally add points to referrer here, or do it on first order
+-                    
+-                    await cursor.execute("""
+-                        INSERT INTO clients (telegram_id, name, language, referral_code, referred_by)
+-                        VALUES (%s, %s, %s, %s, %s)
+-                    """, (str(telegram_id), name or "Mijoz", language, my_referral_code, referred_by_id))
+-                    
+-                    await cursor.execute("SELECT * FROM clients WHERE telegram_id = %s", (str(telegram_id),))
+-                    return dict(await cursor.fetchone())
++            
++            if client:
++                await cursor.execute(
++                    "UPDATE clients SET last_activity = %s WHERE telegram_id = %s",
++                    (datetime.now(), str(telegram_id))
++                )
++                await conn.commit()
++                return dict(client)
++            else:
++                await cursor.execute("""
++                    INSERT INTO clients (telegram_id, name, language)
++                    VALUES (%s, %s, %s)
++                """, (str(telegram_id), name or "Mijoz", language))
++                await conn.commit()
++                await cursor.execute("SELECT * FROM clients WHERE telegram_id = %s", (str(telegram_id),))
++                return dict(await cursor.fetchone())
+     
+     async def update_client(self, telegram_id: str, **kwargs):
+         async with self.get_conn() as conn:
+             async with conn.cursor() as cursor:
+                 updates = ", ".join([f"{k} = %s" for k in kwargs.keys()])
+                 values = list(kwargs.values()) + [str(telegram_id)]
+-                await cursor.execute(f"UPDATE clients SET {updates} WHERE telegram_id = %s", tuple(values))
++                await cursor.execute(f"UPDATE clients SET {updates} WHERE telegram_id = %s", values)
++                await conn.commit()
+ 
+     async def update_client_name(self, telegram_id: str, name: str):
+         await self.update_client(telegram_id, name=name)
+-
++    
+     # ================================================
+     # BUYURTMALAR METODLARI
+     # ================================================
+     async def create_order(self, data: Dict) -> Dict:
+         async with self.get_conn() as conn:
+             async with conn.cursor() as cursor:
+-                today = datetime.now().strftime("%Y%m%d")
+-                await cursor.execute("SELECT COUNT(*) as cnt FROM orders WHERE DATE(created_at) = CURDATE()")
++            today = datetime.now().strftime("%Y%m%d")
++            await cursor.execute("SELECT COUNT(*) as cnt FROM orders WHERE date(created_at) = CURDATE()") as cursor:
+                 row = await cursor.fetchone()
+                 today_count = row['cnt'] + 1
+-                order_number = f"TS-{today}-{today_count:03d}"
+-                
+-                await cursor.execute("""
+-                    INSERT INTO orders (
+-                        order_number, client_id, client_telegram_id, service_type,
+-                        service_name, quantity, unit, price_per_unit, surge_multiplier, total_price,
+-                        address, scheduled_date, scheduled_time, notes, is_eco_friendly, custom_checklist
+-                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+-                """, (
+-                    order_number, data.get('client_id'), data.get('client_telegram_id'),
+-                    data.get('service_type'), data.get('service_name'), data.get('quantity'),
+-                    data.get('unit'), data.get('price_per_unit'), data.get('surge_multiplier', 1.0),
+-                    data.get('total_price'), data.get('address'), data.get('scheduled_date'),
+-                    data.get('scheduled_time'), data.get('notes'),
+-                    data.get('is_eco_friendly', False), data.get('custom_checklist', '')
+-                ))
+-                order_id = cursor.lastrowid
+-                
+-                await cursor.execute("""
+-                    INSERT INTO finance (type, category, amount, description, order_id, date)
+-                    VALUES ('daromad', 'buyurtma', %s, %s, %s, CURDATE())
+-                """, (data.get('total_price'), f"Buyurtma #{order_number}", order_id))
+-                
+-                await cursor.execute("""
+-                    UPDATE clients 
+-                    SET total_orders = total_orders + 1, 
+-                        total_spent = total_spent + %s
+-                    WHERE telegram_id = %s
+-                """, (data.get('total_price', 0), str(data.get('client_telegram_id'))))
+-                
+-                # Check for referral reward
+-                await cursor.execute("SELECT total_orders, referred_by FROM clients WHERE telegram_id = %s", (str(data.get('client_telegram_id')),))
+-                client_after = await cursor.fetchone()
+-                if client_after and client_after['total_orders'] == 1 and client_after['referred_by']:
+-                    # Reward referrer
+-                    reward_points = 50
+-                    await cursor.execute("""
+-                        UPDATE clients SET loyalty_points = loyalty_points + %s WHERE id = %s
+-                    """, (reward_points, client_after['referred_by']))
+-                
+-                await cursor.execute("SELECT * FROM orders WHERE id = %s", (order_id,))
++            order_number = f"TS-{today}-{today_count:03d}"
++            
++            cursor = await cursor.execute("""
++                INSERT INTO orders (
++                    order_number, client_id, client_telegram_id, service_type,
++                    service_name, quantity, unit, price_per_unit, surge_multiplier, total_price,
++                    address, scheduled_date, scheduled_time, notes
++                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
++            """, (
++                order_number,
++                data.get('client_id'),
++                data.get('client_telegram_id'),
++                data.get('service_type'),
++                data.get('service_name'),
++                data.get('quantity'),
++                data.get('unit'),
++                data.get('price_per_unit'),
++                data.get('surge_multiplier', 1.0),
++                data.get('total_price'),
++                data.get('address'),
++                data.get('scheduled_date'),
++                data.get('scheduled_time'),
++                data.get('notes')
++            ))
++            order_id = cursor.lastrowid
++            
++            await cursor.execute("""
++                INSERT INTO finance (type, category, amount, description, order_id, date)
++                VALUES ('daromad', 'buyurtma', %s, %s, %s, CURDATE())
++            """, (data.get('total_price'), f"Buyurtma #{order_number}", order_id))
++            
++            await cursor.execute("""
++                UPDATE clients 
++                SET total_orders = total_orders + 1, 
++                    total_spent = total_spent + %s
++                WHERE telegram_id = %s
++            """, (data.get('total_price', 0), str(data.get('client_telegram_id'))))
++            
++            await conn.commit()
++            
++            await cursor.execute("SELECT * FROM orders WHERE id = %s", (order_id,)) as cursor:
+                 return dict(await cursor.fetchone())
+-
+-    async def get_client_orders(self, telegram_id: str, limit: int = 5) -> List[Dict]:
+-        """Mijozning oxirgi buyurtmalarini olish"""
+-        async with self.get_conn() as conn:
+-            async with conn.cursor() as cursor:
+-                await cursor.execute("""
+-                    SELECT * FROM orders 
+-                    WHERE client_telegram_id = %s 
+-                    ORDER BY created_at DESC 
+-                    LIMIT %s
+-                """, (str(telegram_id), limit))
+-                return [dict(row) for row in await cursor.fetchall()]
+-
++    
+     async def get_order(self, order_id: int) -> Optional[Dict]:
+         async with self.get_conn() as conn:
+             async with conn.cursor() as cursor:
+-                await cursor.execute("SELECT * FROM orders WHERE id = %s", (order_id,))
++            await cursor.execute("SELECT * FROM orders WHERE id = %s", (order_id,)) as cursor:
+                 row = await cursor.fetchone()
+                 return dict(row) if row else None
+-
++    
+     async def update_order_status(self, order_id: int, status: str, worker_ids: str = None):
+         async with self.get_conn() as conn:
+             async with conn.cursor() as cursor:
+-                if worker_ids:
+-                    await cursor.execute(
+-                        "UPDATE orders SET status = %s, worker_ids = %s WHERE id = %s",
+-                        (status, worker_ids, order_id)
+-                    )
+-                else:
+-                    await cursor.execute(
+-                        "UPDATE orders SET status = %s WHERE id = %s",
+-                        (status, order_id)
+-                    )
+-                if status == 'bajarildi':
+-                    await cursor.execute(
+-                        "UPDATE orders SET completed_at = %s WHERE id = %s",
+-                        (datetime.now(), order_id)
+-                    )
+-
++            if worker_ids:
++                await cursor.execute(
++                    "UPDATE orders SET status = %s, worker_ids = %s WHERE id = %s",
++                    (status, worker_ids, order_id)
++                )
++            else:
++                await cursor.execute(
++                    "UPDATE orders SET status = %s WHERE id = %s",
++                    (status, order_id)
++                )
++            if status == 'bajarildi':
++                await cursor.execute(
++                    "UPDATE orders SET completed_at = %s WHERE id = %s",
++                    (datetime.now(), order_id)
++                )
++            await conn.commit()
++    
+     async def get_today_orders(self) -> List[Dict]:
+         async with self.get_conn() as conn:
+             async with conn.cursor() as cursor:
+-                await cursor.execute("""
+-                    SELECT o.*, c.name as client_name, c.phone as client_phone
+-                    FROM orders o
+-                    LEFT JOIN clients c ON o.client_telegram_id = c.telegram_id
+-                    WHERE DATE(o.created_at) = CURDATE()
+-                    ORDER BY o.created_at DESC
+-                """)
++            await cursor.execute("""
++                SELECT o.*, c.name as client_name, c.phone as client_phone
++                FROM orders o
++                LEFT JOIN clients c ON o.client_telegram_id = c.telegram_id
++                WHERE date(o.created_at) = CURDATE()
++                ORDER BY o.created_at DESC
++            """) as cursor:
+                 return [dict(row) for row in await cursor.fetchall()]
+-
++    
+     async def get_orders_stats(self, days: int = 30) -> Dict:
+         async with self.get_conn() as conn:
+             async with conn.cursor() as cursor:
+-                await cursor.execute("""
+-                    SELECT 
+-                        COUNT(*) as total_orders,
+-                        SUM(total_price) as total_revenue,
+-                        AVG(total_price) as avg_order_value,
+-                        COUNT(CASE WHEN status = 'bajarildi' THEN 1 END) as completed,
+-                        COUNT(CASE WHEN status = 'yangi' THEN 1 END) as new_orders
+-                    FROM orders
+-                    WHERE created_at >= DATE_SUB(NOW(), INTERVAL %s DAY)
+-                """, (days,))
++            await cursor.execute("""
++                SELECT 
++                    COUNT(*) as total_orders,
++                    SUM(total_price) as total_revenue,
++                    AVG(total_price) as avg_order_value,
++                    COUNT(CASE WHEN status = 'bajarildi' THEN 1 END) as completed,
++                    COUNT(CASE WHEN status = 'yangi' THEN 1 END) as new_orders
++                FROM orders
++                WHERE created_at >= DATE_SUB(NOW(), INTERVAL %s DAY)
++            """, (days,)) as cursor:
+                 return dict(await cursor.fetchone())
+-
++    
+     # ================================================
+     # ISHCHILAR METODLARI
+     # ================================================
+     async def get_available_workers(self) -> List[Dict]:
+         async with self.get_conn() as conn:
+             async with conn.cursor() as cursor:
+-                await cursor.execute("""
+-                    SELECT * FROM workers 
+-                    WHERE is_active = 1 AND is_available = 1
+-                    ORDER BY rating DESC
+-                """)
++            await cursor.execute("""
++                SELECT * FROM workers 
++                WHERE is_active = 1 AND is_available = 1
++                ORDER BY rating DESC
++            """) as cursor:
+                 return [dict(row) for row in await cursor.fetchall()]
+-
++    
+     async def get_all_workers(self) -> List[Dict]:
+         async with self.get_conn() as conn:
+             async with conn.cursor() as cursor:
+-                await cursor.execute("SELECT * FROM workers WHERE is_active = 1")
++            await cursor.execute("SELECT * FROM workers WHERE is_active = 1") as cursor:
+                 return [dict(row) for row in await cursor.fetchall()]
+-
++    
+     async def add_worker(self, name: str, phone: str, telegram_id: str, telegram_username: str = None, specialization: str = None):
+         async with self.get_conn() as conn:
+             async with conn.cursor() as cursor:
+-                await cursor.execute("""
+-                    INSERT IGNORE INTO workers (name, phone, telegram_id, telegram_username, specialization)
+-                    VALUES (%s, %s, %s, %s, %s)
+-                """, (name, phone, str(telegram_id), telegram_username, specialization))
++            await cursor.execute("""
++                INSERT IGNORE INTO workers (name, phone, telegram_id, telegram_username, specialization)
++                VALUES (%s, %s, %s, %s, %s)
++            """, (name, phone, str(telegram_id), telegram_username, specialization))
++            await conn.commit()
+ 
+     async def update_worker_location(self, telegram_id: str, lat: float, lon: float):
+         async with self.get_conn() as conn:
+             async with conn.cursor() as cursor:
+-                await cursor.execute("""
+-                    UPDATE workers SET gps_lat = %s, gps_lon = %s, last_location_update = %s
+-                    WHERE telegram_id = %s
+-                """, (lat, lon, datetime.now(), str(telegram_id)))
+-
++            await cursor.execute("""
++                UPDATE workers SET gps_lat = %s, gps_lon = %s, last_location_update = %s
++                WHERE telegram_id = %s
++            """, (lat, lon, datetime.now(), str(telegram_id)))
++            await conn.commit()
++    
+     # ================================================
+     # FOYDALANUVCHI HOLATI (State Machine)
+     # ================================================
+     async def get_user_state(self, telegram_id: str) -> Dict:
+         async with self.get_conn() as conn:
+             async with conn.cursor() as cursor:
+-                await cursor.execute("SELECT * FROM user_states WHERE telegram_id = %s", (str(telegram_id),))
++            await cursor.execute("SELECT * FROM user_states WHERE telegram_id = %s", (str(telegram_id),)) as cursor:
+                 row = await cursor.fetchone()
+                 if row:
+                     state_data = dict(row)
+@@ -436,50 +437,53 @@ class Database:
+                         state_data['context'] = json.loads(state_data['context'])
+                     return state_data
+                 return {'telegram_id': str(telegram_id), 'state': 'idle', 'context': {}}
+-
++    
+     async def set_user_state(self, telegram_id: str, state: str, context: Dict = None):
+         async with self.get_conn() as conn:
+             async with conn.cursor() as cursor:
+-                context_json = json.dumps(context or {}, ensure_ascii=False)
+-                await cursor.execute("""
+-                    REPLACE INTO user_states (telegram_id, state, context)
+-                    VALUES (%s, %s, %s)
+-                """, (str(telegram_id), state, context_json))
+-
++            context_json = json.dumps(context or {}, ensure_ascii=False)
++            await cursor.execute("""
++                REPLACE INTO user_states (telegram_id, state, context, updated_at)
++                VALUES (%s, %s, %s, %s)
++            """, (str(telegram_id), state, context_json, datetime.now()))
++            await conn.commit()
++    
+     # ================================================
+     # SUHBAT TARIXI
+     # ================================================
+     async def save_message(self, telegram_id: str, role: str, message: str, state: str = None, platform: str = 'telegram'):
+         async with self.get_conn() as conn:
+             async with conn.cursor() as cursor:
+-                await cursor.execute("""
+-                    INSERT INTO conversations (telegram_id, platform, role, message, state)
+-                    VALUES (%s, %s, %s, %s, %s)
+-                """, (str(telegram_id), platform, role, message, state))
+-
++            await cursor.execute("""
++                INSERT INTO conversations (telegram_id, platform, role, message, state)
++                VALUES (%s, %s, %s, %s, %s)
++            """, (str(telegram_id), platform, role, message, state))
++            await conn.commit()
++    
+     async def get_conversation_history(self, telegram_id: str, limit: int = 10) -> List[Dict]:
+         async with self.get_conn() as conn:
+             async with conn.cursor() as cursor:
+-                await cursor.execute("""
+-                    SELECT role, message FROM conversations
+-                    WHERE telegram_id = %s
+-                    ORDER BY created_at DESC
+-                    LIMIT %s
+-                """, (str(telegram_id), limit))
++            await cursor.execute("""
++                SELECT role, message FROM conversations
++                WHERE telegram_id = %s
++                ORDER BY created_at DESC
++                LIMIT %s
++            """, (str(telegram_id), limit)) as cursor:
+                 rows = await cursor.fetchall()
+                 return [{'role': r['role'], 'message': r['message']} for r in reversed(rows)]
+-
++    
+     # ================================================
+     # AI O'RGANISH
+     # ================================================
+     async def save_learning(self, context_type: str, input_data: str, output_data: str, success: bool, feedback_score: float = None, improvement: str = None):
+         async with self.get_conn() as conn:
+             async with conn.cursor() as cursor:
+-                await cursor.execute("""
+-                    INSERT INTO ai_learning (context_type, input_data, output_data, success, feedback_score, improvement)
+-                    VALUES (%s, %s, %s, %s, %s, %s)
+-                """, (context_type, input_data, output_data, int(success), feedback_score, improvement))
+-
++            await cursor.execute("""
++                INSERT INTO ai_learning (context_type, input_data, output_data, success, feedback_score, improvement)
++                VALUES (%s, %s, %s, %s, %s, %s)
++            """, (context_type, input_data, output_data, int(success), feedback_score, improvement))
++            await conn.commit()
++    
+     async def get_successful_patterns(self, context_type: str = 'general', limit: int = 5) -> List[Dict]:
+         async with self.get_conn() as conn:
+             async with conn.cursor() as cursor:
+@@ -491,55 +495,56 @@ class Database:
+                     LIMIT %s
+                 """, (context_type, limit))
+                 return [dict(row) for row in await cursor.fetchall()]
+-
++    
+     # ================================================
+     # MOLIYA
+     # ================================================
+     async def get_finance_stats(self) -> Dict:
+         async with self.get_conn() as conn:
+             async with conn.cursor() as cursor:
+-                await cursor.execute("""
+-                    SELECT
+-                        SUM(CASE WHEN type = 'daromad' AND date = CURDATE() THEN amount ELSE 0 END) as today_revenue,
+-                        SUM(CASE WHEN type = 'daromad' AND DATE_FORMAT(date, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m') THEN amount ELSE 0 END) as month_revenue,
+-                        SUM(CASE WHEN type = 'daromad' THEN amount ELSE 0 END) as total_revenue
+-                    FROM finance
+-                """)
++            await cursor.execute("""
++                SELECT
++                    SUM(CASE WHEN type = 'daromad' AND date = CURDATE() THEN amount ELSE 0 END) as today_revenue,
++                    SUM(CASE WHEN type = 'daromad' AND strftime('%Y-%m', date) = strftime('%Y-%m', 'now') THEN amount ELSE 0 END) as month_revenue,
++                    SUM(CASE WHEN type = 'daromad' THEN amount ELSE 0 END) as total_revenue
++                FROM finance
++            """) as cursor:
+                 return dict(await cursor.fetchone())
+-
++    
+     # ================================================
+     # KUNLIK HISOBOT
+     # ================================================
+     async def save_daily_report(self, report_data: Dict):
+         async with self.get_conn() as conn:
+             async with conn.cursor() as cursor:
+-                today = datetime.now().strftime("%Y-%m-%d")
+-                await cursor.execute("""
+-                    REPLACE INTO daily_reports (
+-                        report_date, orders_count, completed_orders, total_revenue,
+-                        new_clients, messages_received, messages_answered,
+-                        ai_improvements, competitor_insights, tomorrow_plan
+-                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+-                """, (
+-                    today,
+-                    report_data.get('orders_count', 0),
+-                    report_data.get('completed_orders', 0),
+-                    report_data.get('total_revenue', 0),
+-                    report_data.get('new_clients', 0),
+-                    report_data.get('messages_received', 0),
+-                    report_data.get('messages_answered', 0),
+-                    json.dumps(report_data.get('ai_improvements', []), ensure_ascii=False),
+-                    json.dumps(report_data.get('competitor_insights', {}), ensure_ascii=False),
+-                    report_data.get('tomorrow_plan', '')
+-                ))
+-
++            today = datetime.now().strftime("%Y-%m-%d")
++            await cursor.execute("""
++                REPLACE INTO daily_reports (
++                    report_date, orders_count, completed_orders, total_revenue,
++                    new_clients, messages_received, messages_answered,
++                    ai_improvements, competitor_insights, tomorrow_plan
++                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
++            """, (
++                today,
++                report_data.get('orders_count', 0),
++                report_data.get('completed_orders', 0),
++                report_data.get('total_revenue', 0),
++                report_data.get('new_clients', 0),
++                report_data.get('messages_received', 0),
++                report_data.get('messages_answered', 0),
++                json.dumps(report_data.get('ai_improvements', []), ensure_ascii=False),
++                json.dumps(report_data.get('competitor_insights', {}), ensure_ascii=False),
++                report_data.get('tomorrow_plan', '')
++            ))
++            await conn.commit()
++    
+     async def get_messages_count_today(self) -> int:
+         async with self.get_conn() as conn:
+             async with conn.cursor() as cursor:
+-                await cursor.execute("""
+-                    SELECT COUNT(*) as cnt FROM conversations
+-                    WHERE DATE(created_at) = CURDATE() AND role = 'user'
+-                """)
++            await cursor.execute("""
++                SELECT COUNT(*) as cnt FROM conversations
++                WHERE date(created_at) = CURDATE() AND role = 'user'
++            """) as cursor:
+                 row = await cursor.fetchone()
+                 return row['cnt']
+ 

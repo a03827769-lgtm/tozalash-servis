@@ -1,0 +1,53 @@
+# =====================================================
+# Koyeb Production Service Specification
+# Tozalash Servis AI Automation Platform (Free Nano Tier)
+# =====================================================
+name: tozalash-servis
+services:
+  - name: backend
+    type: web
+    instance_type: nano
+    regions:
+      - fra
+    docker:
+      dockerfile: Dockerfile
+    ports:
+      - port: 8000
+        path: /
+        protocol: http
+    routes:
+      - path: /
+        port: 8000
+    health_checks:
+      - http:
+          path: /health
+          port: 8000
+        interval: 30
+        timeout: 5
+        unhealthy_threshold: 3
+        healthy_threshold: 1
+    env:
+      - key: PORT
+        value: "8000"
+      - key: DB_TYPE
+        value: "postgres"
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_HOST
+        value: ""
+      - key: DB_USERNAME
+        value: "postgres"
+      - key: DB_PASSWORD
+        value: ""
+      - key: DB_DATABASE
+        value: "postgres"
+      - key: REDIS_URL
+        value: ""
+      - key: TELEGRAM_BOT_TOKEN
+        value: ""
+      - key: GEMINI_API_KEY
+        value: ""
+      - key: ADMIN_TELEGRAM_ID
+        value: ""
+      - key: APP_PUBLIC_URL
+        value: ""

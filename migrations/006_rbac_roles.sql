@@ -1,0 +1,2 @@
+ALTER TABLE clients ADD COLUMN role VARCHAR(20) DEFAULT 'user';
+ALTER TABLE workers ADD COLUMN role VARCHAR(20) DEFAULT 'worker';

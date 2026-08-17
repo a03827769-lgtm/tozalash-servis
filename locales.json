@@ -1,0 +1,32 @@
+{
+    "uz": {
+        "welcome": "🌟 *Tozalash Servis*ga xush kelibsiz!\n\nBiz Toshkentda professional tozalash xizmatlarini ko'rsatamiz.\n\n🧹 *Xizmatlarimiz:*\n• Uy/Ofis tozalash — 500,000 so'm/ishchi\n• Ta'mirdan keyingi tozalash — 600,000 so'm/ishchi\n• Divan yuvish — 80,000 so'm/o'rin\n• Stul yuvish — 50,000 so'm/dona\n• Gilam yuvish — 27,000 so'm/kv.m\n• Fasad tozalash — 22,000 so'm/kv.m\n• Plitka tozalash — 15,000 so'm/kv.m\n\n📱 Quyidagi tugmalardan birini tanlang:",
+        "order_start": "Buyurtma berish uchun qaysi xizmatni xohlaysiz?",
+        "ask_address": "📍 Manzilingizni yuboring (tuman, ko'cha, uy raqami):",
+        "ask_date": "📅 Qaysi kunda xizmat ko'rsatishimizni xohlaysiz? (masalan: 15 avgust yoki ertaga)",
+        "ask_quantity": "🔢 Miqdorni kiriting ({unit}):",
+        "price_calculation": "💰 *Hisoblangan narx:*\n{service}: {quantity} {unit} × {price:,} = *{total:,} so'm*",
+        "order_confirmed": "✅ *Buyurtmangiz qabul qilindi!*\n\n📋 *Buyurtma #{order_id}*\n🧹 Xizmat: {service}\n📍 Manzil: {address}\n📅 Sana: {date}\n💰 Narx: {price:,} so'm\n\nBizning xodimlarimiz siz bilan bog'lanadi. Rahmat! 🙏",
+        "about": "ℹ️ *Tozalash Servis haqida*\n\n🏆 Toshkentdagi professional tozalash kompaniyasi\n👷 10+ tajribali ishchilarimiz\n⭐ 100+ mamnun mijozlarimiz\n🕐 24/7 xizmat\n📞 Tel: {phone}"
+    },
+    "ru": {
+        "welcome": "🌟 Добро пожаловать в *Tozalash Servis*!\n\nМы предоставляем профессиональные услуги по уборке в Ташкенте.\n\n🧹 *Наши услуги:*\n• Уборка дома/офиса — 500,000 сум/работник\n• Уборка после ремонта — 600,000 сум/работник\n• Химчистка дивана — 80,000 сум/место\n• Химчистка стула — 50,000 сум/штук\n• Стирка ковров — 27,000 сум/кв.м\n• Чистка фасада — 22,000 сум/кв.м\n• Чистка плитки — 15,000 сум/кв.м\n\n📱 Выберите одну из кнопок ниже:",
+        "order_start": "Какую услугу вы хотите заказать?",
+        "ask_address": "📍 Отправьте ваш адрес (район, улица, номер дома):",
+        "ask_date": "📅 Какого числа вы хотите нашу услугу? (например: 15 августа или завтра)",
+        "ask_quantity": "🔢 Введите количество ({unit}):",
+        "price_calculation": "💰 *Рассчитанная цена:*\n{service}: {quantity} {unit} × {price:,} = *{total:,} сум*",
+        "order_confirmed": "✅ *Ваш заказ принят!*\n\n📋 *Заказ #{order_id}*\n🧹 Услуга: {service}\n📍 Адрес: {address}\n📅 Дата: {date}\n💰 Цена: {price:,} сум\n\nНаши сотрудники свяжутся с вами. Спасибо! 🙏",
+        "about": "ℹ️ *О Tozalash Servis*\n\n🏆 Профессиональная клининговая компания в Ташкенте\n👷 10+ опытных сотрудников\n⭐ 100+ довольных клиентов\n🕐 Работаем 24/7\n📞 Тел: {phone}"
+    },
+    "en": {
+        "welcome": "🌟 Welcome to *Tozalash Servis*!\n\nWe provide professional cleaning services in Tashkent.\n\n🧹 *Our Services:*\n• Home/Office Cleaning — 500,000 UZS/worker\n• Post-Renovation Cleaning — 600,000 UZS/worker\n• Sofa Cleaning — 80,000 UZS/seat\n• Chair Cleaning — 50,000 UZS/item\n• Carpet Cleaning — 27,000 UZS/sq.m\n• Facade Cleaning — 22,000 UZS/sq.m\n• Tile Cleaning — 15,000 UZS/sq.m\n\n📱 Please choose an option below:",
+        "order_start": "Which service would you like to order?",
+        "ask_address": "📍 Please send your address (district, street, house number):",
+        "ask_date": "📅 On which day would you like our service? (e.g. August 15 or tomorrow)",
+        "ask_quantity": "🔢 Enter the quantity ({unit}):",
+        "price_calculation": "💰 *Calculated Price:*\n{service}: {quantity} {unit} × {price:,} = *{total:,} UZS*",
+        "order_confirmed": "✅ *Your order has been received!*\n\n📋 *Order #{order_id}*\n🧹 Service: {service}\n📍 Address: {address}\n📅 Date: {date}\n💰 Price: {price:,} UZS\n\nOur staff will contact you shortly. Thank you! 🙏",
+        "about": "ℹ️ *About Tozalash Servis*\n\n🏆 Professional cleaning company in Tashkent\n👷 10+ experienced workers\n⭐ 100+ satisfied clients\n🕐 24/7 service\n📞 Tel: {phone}"
+    }
+}

@@ -1,0 +1,55 @@
+<USER_REQUEST>
+/goal /browser /grill-me /teamwork-preview /learn Siz Kubboy AI, dunyodagi eng ilg‘or va kuchli sun’iy intellekt asosidagi dasturiy ta’minot arxitektori, yetakchi tizim muhandisi, xavfsizlik eksperti, UI/UX dizayner, DevOps mutaxassisi, QA muhandisi va loyiha menejerisiz. Sizning yagona missiyangiz – “Tozalash Servis” nomli, O‘zbekistondagi tozalash biznesini to‘liq avtomatlashtiruvchi loyihani noldan boshlab, dunyo miqyosidagi eng mukammal, eng kuchli, eng professional, eng aqlli, eng funksional, eng chiroyli va qulay dizaynli, eng kreativ hamda mutlaqo kamchiliksiz holga keltirishdir.
+
+Sizda loyihaning to‘liq kod bazasiga (barcha Python fayllar, konfiguratsiyalar, Dockerfile, maʼlumotlar bazasi sxemasi, Telegram bot, API, AI modullar, frontend elementlar va boshqalar) to‘liq kirish huquqi mavjud. Siz loyihani istalgancha tahrirlashingiz, qayta yozishingiz, yangi modullar qo‘shishingiz, testlar yozishingiz va ishlab chiqarishga tayyorlashingiz mumkin.
+
+Ishingizni quyidagi qatʼiy, ketma-ket bosqichlarda olib boring. Har bir bosqichda eng yuqori professionallik va ijodkorlikni namoyon qiling. Hech qachon taxminiy, chala yoki “shunchaki ishlaydi” darajasidagi kod yozmang. Har bir satr dunyo standartlariga mos bo‘lsin.
+
+---
+
+### 0-BOSQICH: TAYYORGARLIK VA KONTEKSTNI ANIQLASH
+1. Loyihaning mavjud fayl tuzilmasini, asosiy modullarni va bog‘liqliklarni tahlil qiling.
+2. Mavjud texnologiyalar, kutubxonalar va konfiguratsiyalarni aniqlang.
+3. O‘zingizga ish rejasi uchun ichki xarita yarating. Agar biror joy noaniq bo‘lsa, foydalanuvchidan (loyiha egasidan) qisqacha so‘rang, lekin ko‘p hollarda mavjud kod va hujjatlardan xulosa chiqaring.
+4. Ishni boshlashdan oldin foydalanuvchiga qisqacha tayyorgarlik hisobotini bering (topilgan umumiy struktura, asosiy komponentlar, taxminiy ish hajmi).
+
+---
+
+### 1-BOSQICH: TO‘LIQ VA CHUQUR AUDIT
+Loyihani butunlay o‘qing va quyidagi yo‘nalishlar bo‘yicha mukammal tekshiruvdan o‘tkazing. Har bir sohada topilgan har bir muam
+<truncated 21259 bytes>
+a [Slash Command]:
+<LEARN>
+The user invoked /learn to persist reusable behaviors from recent interactions, corrections, or successes. Iterate interactively with the user to clarify what behavior to retain as updated or new skills or rules.
+
+## Identify What to Learn
+1. **Analyze User Messages**: Prioritize analyzing recent user messages for explicit corrections, constraints, overrides, or pointers (e.g., "no", "instead", "that failed").
+2. **Identify the Fix**: Compare failed attempts with the successful resolution to isolate the pivotal change.
+3. **Determine Root Cause & Scope**: Address the underlying issue, not surface symptoms. Determine if it's universal or domain-specific.
+4. **Verify if learning is needed**: If the interaction did not reveal any new reusable behaviors or constraints, explain this to the user and exit without proposing changes.
+
+## Classify Rules vs. Skills
+1. **Rule**: Universal behavioral guardrails, strict constraints, or formatting invariants.
+2. **Skill**: Actionable multi-step tool chains, complex flag combinations, or cheatsheets.
+
+## Create vs. Update
+* **Update Existing (Prefer)**: Update an active Rule/Skill if it was used but failed, was outdated, missed edge cases, or diverged from successful actions.
+* **Create New**: Only when the behavior covers an entirely new domain or guardrail not covered by any existing rules or skills.
+
+## Mandatory Proposal Workflow
+Do NOT modify configuration files immediately.
+1. Create/update a learning_proposal.md artifact outlining your classification, rationale, and precise text additions/diffs.
+2. Set request_feedback = true in ArtifactMetadata for user review.
+3. Only execute file/tool modifications after explicit user approval.
+</LEARN>
+</ADDITIONAL_METADATA>
+<USER_SETTINGS_CHANGE>
+The user changed setting `Model Selection` from None to Gemini 3.1 Pro (High). No need to comment on this change if the user doesn't ask about it. If reporting what model you are, please use a human readable name instead of the exact string.
+</USER_SETTINGS_CHANGE>
+---<USER_REQUEST>
+continue
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-08-13T10:24:47+05:00.
+</ADDITIONAL_METADATA>
+---

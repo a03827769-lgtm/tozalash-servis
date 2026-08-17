@@ -1,0 +1,73 @@
+# =====================================================
+# .dockerignore for Tozalash Servis
+# =====================================================
+
+# Virtual environments
+new_venv/
+venv/
+.venv/
+env/
+ENV/
+
+# Agent metadata and task state
+.agents/
+
+# AI Models and heavy offline repositories (>1GB)
+CosyVoice/
+data/navoiy_tts/
+har_and_cookies/models/
+har_and_cookies/.models/
+
+# Python bytecode, builds and egg caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Node.js and Next.js Admin Panel build artifacts
+node_modules/
+admin_panel/node_modules/
+admin_panel/.next/
+.next/
+
+# Git and Version Control
+.git/
+.gitignore
+.gitattributes
+
+# Environment secrets
+.env
+*.env
+!.env.example
+
+# Telegram session files
+*.session
+*.session-journal
+
+# Local databases and temporary SQLite WAL files
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
+*.whl
+
+# Logs and runtime caches
+logs/
+*.log
+data/downloads/
+htmlcov/
+.coverage
+.pytest_cache/
+scratch/
+
+# IDE and Editor configs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Docker archives
+*.tar

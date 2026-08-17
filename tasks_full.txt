@@ -1,0 +1,489 @@
+<USER_REQUEST>
+/goal /browser /grill-me /teamwork-preview /learn Siz Kubboy AI, dunyodagi eng ilg‘or va kuchli sun’iy intellekt asosidagi dasturiy ta’minot arxitektori, yetakchi tizim muhandisi, xavfsizlik eksperti, UI/UX dizayner, DevOps mutaxassisi, QA muhandisi va loyiha menejerisiz. Sizning yagona missiyangiz – “Tozalash Servis” nomli, O‘zbekistondagi tozalash biznesini to‘liq avtomatlashtiruvchi loyihani noldan boshlab, dunyo miqyosidagi eng mukammal, eng kuchli, eng professional, eng aqlli, eng funksional, eng chiroyli va qulay dizaynli, eng kreativ hamda mutlaqo kamchiliksiz holga keltirishdir.
+
+Sizda loyihaning to‘liq kod bazasiga (barcha Python fayllar, konfiguratsiyalar, Dockerfile, maʼlumotlar bazasi sxemasi, Telegram bot, API, AI modullar, frontend elementlar va boshqalar) to‘liq kirish huquqi mavjud. Siz loyihani istalgancha tahrirlashingiz, qayta yozishingiz, yangi modullar qo‘shishingiz, testlar yozishingiz va ishlab chiqarishga tayyorlashingiz mumkin.
+
+Ishingizni quyidagi qatʼiy, ketma-ket bosqichlarda olib boring. Har bir bosqichda eng yuqori professionallik va ijodkorlikni namoyon qiling. Hech qachon taxminiy, chala yoki “shunchaki ishlaydi” darajasidagi kod yozmang. Har bir satr dunyo standartlariga mos bo‘lsin.
+
+---
+
+### 0-BOSQICH: TAYYORGARLIK VA KONTEKSTNI ANIQLASH
+1. Loyihaning mavjud fayl tuzilmasini, asosiy modullarni va bog‘liqliklarni tahlil qiling.
+2. Mavjud texnologiyalar, kutubxonalar va konfiguratsiyalarni aniqlang.
+3. O‘zingizga ish rejasi uchun ichki xarita yarating. Agar biror joy noaniq bo‘lsa, foydalanuvchidan (loyiha egasidan) qisqacha so‘rang, lekin ko‘p hollarda mavjud kod va hujjatlardan xulosa chiqaring.
+4. Ishni boshlashdan oldin foydalanuvchiga qisqacha tayyorgarlik hisobotini bering (topilgan umumiy struktura, asosiy komponentlar, taxminiy ish hajmi).
+
+---
+
+### 1-BOSQICH: TO‘LIQ VA CHUQUR AUDIT
+Loyihani butunlay o‘qing va quyidagi yo‘nalishlar bo‘yicha mukammal tekshiruvdan o‘tkazing. Har bir sohada topilgan har bir muammoni aniq belgilang, sababini tushuntiring va darajasini (Kritik / Muhim / Yaxshilash) belgilang.
+
+**1.1 Kod sifati va arxitektura**
+- Python kodidagi har qanday xatolik (SyntaxError, NameError, TypeError, AttributeError, IndexError, KeyError va h.k.).
+- Noto‘g‘ri importlar, mavjud bo‘lmagan funksiya yoki klass chaqiruvlari, o‘zgaruvchi nomlaridagi nomuvofiqliklar.
+- Asinxron/await noto‘g‘ri ishlatilishi (bloklovchi kod, event loop’ni buzish, noto‘g‘ri sessiya boshqaruvi).
+- Anti-patternlar (God object, spaghetti code, takroriy kod – WET, noto‘g‘ri abstraksiyalar, ortiqcha murakkablik).
+- Fayl va papka tuzilishi: nomuvofiqliklar, ortib qolgan fayllar (masalan, `database_new.py`), keraksiz importlar, siklik importlar.
+- Kodda izchillik: nomlash uslubi, docstringlar, izohlar, formatlash (PEP8 ga rioya qilish darajasi).
+- SOLID tamoyillariga qanchalik amal qilingan.
+
+**1.2 Xavfsizlik**
+- CORS sozlamalari (`allow_origins=["*"]` kabi zaifliklar), CSRF himoyasi.
+- Muhit o‘zgaruvchilari (.env) to‘g‘ri ishlatilmayotgan holatlar, token yoki parollarning kodga qattiq yozilganligi.
+- SQL inʼeksiya ehtimoli (xom so‘rovlar, parametrlangan so‘rovlar yo‘qligi).
+- Foydalanuvchi maʼlumotlarini himoyalashdagi kamchiliklar (parollarni hashlash, shaxsiy maʼlumotlarni shifrlash).
+- API’larda autentifikatsiya va avtorizatsiya muammolari (token tekshiruvi, rollar).
+- Xatolik xabarlarida sezgir maʼlumotlar oshkor bo‘lishi.
+
+**1.3 Maʼlumotlar bazasi**
+- SQL sxema xatolari, yetishmayotgan indekslar, noto‘g‘ri maʼlumot turlari, cheklovlar (constraints).
+- SQLite sintaksisi `aiomysql` bilan mos kelmagan joylar (masalan, placeholder `?` o‘rniga `%s`).
+- Ortib qolgan yoki birlashtirilmagan baza fayllari (masalan, `database_new.py`).
+- Migratsiya tizimining mavjud emasligi yoki noto‘g‘ri ishlashi.
+- Baza ulanishining samaradorligi (connection pooling, async sessiyalar).
+
+**1.4 AI va integratsiyalar**
+- Google Gemini model nomlarining to‘g‘riligi, eng so‘nggi versiyalar bilan ishlash.
+- `ai_brain.py` dagi `get_successful_patterns()` metodidagi parametr xatolari.
+- Ovozli xabarlar (STT/TTS) va Vision AI (rasm orqali narx hisoblash) ishlashidagi kamchiliklar.
+- AI javob generatorining aniqligi, kontekst boshqaruvi, xatolarni ushlash.
+- AI o‘qitish va patternlarni saqlash mexanizmlari.
+
+**1.5 Test qamrovi**
+- Mavjud unit testlar soni, sifati, asosiy modullarni qamrab olgani (80% dan kam bo‘lsa, qo‘shimcha testlar kerak).
+- Testlarning muvaffaqiyatli ishlashi (agar mavjud bo‘lsa, sinab ko‘ring; agar yo‘q bo‘lsa, tuzatish jarayonida yozish kerak).
+- Integratsiya testlari, mock’lar va asinxron testlar mavjudligi.
+
+**1.6 UI/UX va foydalanuvchi tajribasi**
+- Telegram botdagi menyu, xabar formati, tugmalar, emoji ishlatilishi, foydalanuvchi yo‘li (onboarding, buyurtma berish, shikoyat qilish).
+- Admin panel (agar mavjud bo‘lsa): interfeysning qulayligi, responsive dizayn, ranglar, shriftlar, dark/light mode, diagrammalar.
+- Ko‘p tillilik (uz/ru/en) to‘liqligi, tarjima xatolari, matnlarning izchilligi.
+- Xatolik xabarlarining foydalanuvchiga tushunarli va chiroyli ko‘rinishi.
+
+**1.7 DevOps va Ishlab chiqarishga tayyorlik**
+- Docker sozlamalari, multi-stage build, optimizatsiya.
+- Cron joblar to‘g‘ri ishlashi, logging tizimi (Sentry/Grafana) mavjudligi.
+- CI/CD pipeline mavjudligi yoki kerakligi.
+- Deploy jarayoni uchun zarur bo‘lgan skriptlar va hujjatlar.
+
+**Audit natijasi:**  
+Barcha topilgan muammolar va nuqsonlarni uchta guruhga ajratgan holda, aniq ro‘yxat qilib menga taqdim qiling:
+- 🔴 Kritik (loyiha ishlashiga to‘sqinlik qiladi)
+- 🟠 Muhim (tezda tuzatilmasa, keyinchalik jiddiy muammolar keltiradi)
+- 🟡 Yaxshilash (mahsulot sifatini oshirish uchun)
+
+Har bir muammo uchun:
+- Qisqa tavsif
+- Qayerda ekani (fayl, funksiya, qator)
+- Nima uchun bu muammo
+- Tavsiya etilgan yechim
+- Ustuvorlik darajasi
+
+---
+
+### 2-BOSQICH: TOP 100 VAZIFALAR REJASINI TUZISH
+Endi, yuqoridagi audit natijalariga asoslanib, loyihani maksimal mukammallashtirish, puxtalashtirish, kuchaytirish va professionallashtirish uchun **aniq 100 ta vazifadan iborat reja** tuzing. Har bir vazifa quyidagi talablarga javob bersin:
+- Aniq, o‘lchovli va amalga oshirilishi mumkin bo‘lsin.
+- Ustuvorlik tartibida raqamlansin (1–100).
+- Har bir vazifa uchun: qisqa tavsif, maqsad, bajarish qadamlari, qaysi fayl/modulga tegishli ekani, kutilgan natija va test usuli.
+- Vazifalar quyidagi kategoriyalarga bo‘linsin (lekin 100 taga yetishi shart):
+  - Kritik bug tuzatishlar
+  - Xavfsizlik mustahkamlash
+  - Kod sifati va arxitektura yaxshilash
+  - Maʼlumotlar bazasi optimallashtirish va unifikatsiya
+  - AI modullarini kuchaytirish
+  - Test qamrovini oshirish (unit, integratsiya, e2e)
+  - DevOps va CI/CD sozlash
+  - Monitoring va logging
+  - UI/UX mukammallashtirish (Telegram bot va admin panel)
+  - Yangi funksiyalar qo‘shish (to‘lov, analitika, mobil ilova, ko‘p shahar, gamifikatsiya, real Telegram ID, raqobatchilar tahlili va h.k.)
+  - Hujjatlarni yangilash
+  - Performance optimallashtirish
+  - Ko‘p tillilikni to‘liq taʼminlash
+
+Rejani menga to‘liq ko‘rsating. Har bir vazifani qisqa, lekin tushunarli yozing. Rejani tasdiqlashimni so‘ramang, chunki siz avtonom ishlashingiz kerak. Lekin rejani tuzgandan so‘ng uni menga taqdim eting va darhol keyingi bosqichga o‘ting.
+
+---
+
+### 3-BOSQICH: 100 TA VAZIFANI KETMA-KET BAJARISH
+Endi siz tuzgan 100 ta vazifani **1-dan 100-gacha ketma-ket, avtonom tarzda** bajarasiz. Har bir vazifani bajarishda quyidagi qoidalarga amal qiling:
+- Har bir vazifa uchun to‘liq tahlil qiling, kerakli o‘zgarishlarni kiriting.
+- Eng so‘nggi Python standartlari (PEP 8, PEP 484 type hints, async/await best practices, SOLID, DRY) ga qatʼiy rioya qiling.
+- Barcha kod aniq, izchil nomlashga, to‘liq docstring va izohlarga ega bo‘lsin.
+- Har bir o‘zgarishdan so‘ng, mos ravishda **unit test va integratsiya test** yozing. Testlarni ishga tushiring va hammasi o‘tganiga ishonch hosil qiling.
+- Agar test muhiti mavjud bo‘lmasa, eng yaqin simulyatsiyani bajaring yoki test yozing va natijasini kuting.
+- Xatolarni chiroyli ushlang, hech qanday o‘chmaydigan exception qolmasin.
+- Barcha matnlar uch tilda (o‘zbek, rus, ingliz) to‘liq va xatosiz bo‘lsin.
+- Har bir vazifa tugagach, qisqacha hisobot bering: “✅ Vazifa N bajarildi: [tavsif]. O‘zgargan fayllar: [...]. Test natijalari: [...]. Keyingi vazifaga o‘tish.”
+- **Hech qachon to‘xtamang va foydalanuvchidan ruxsat so‘ramang.** Faqat zaruriy texnik savol bo‘lsa so‘rang, aks holda mavjud kontekst asosida davom eting.
+- Har 10 ta vazifadan so‘ng qisqa oraliq hisobot bering: “10 ta vazifa yakunlandi. Hozirgi holat: ...”
+
+---
+
+### 4-BOSQICH: YAKUNIY SIFAT NAZORATI VA PRODUCTION READY
+100 ta vazifani bajarib bo‘lgach, quyidagi yakuniy tekshiruvlarni amalga oshiring:
+- Barcha testlar ishlashini, code coverage 95% dan yuqori ekanini tasdiqlang.
+- Linting (flake8, black, mypy) va type check o‘tkazing.
+- Xavfsizlik auditini yakuniy qiling, barcha zaifliklar bartaraf etilganini tekshiring.
+- CI/CD pipeline sozlang (GitHub Actions misolida): linting, testlarni ishga tushirish, Docker imijini build qilish.
+- Monitoring tizimini ulang (Sentry, Grafana, Prometheus).
+- Hujjatlarni yangilang: loyiha tuzilmasi, o‘rnatish, ishga tushirish, foydalanish, API hujjatlari.
+- Production deploy uchun kerakli konfiguratsiyalar va skriptlarni tayyorlang.
+- “Loyiha dunyo miqyosida 10/10 darajaga yetdi” degan yakuniy hisobot tayyorlang.
+
+Yakuniy hisobotda quyidagilarni ko‘rsating:
+- Bajarilgan 100 ta vazifaning qisqacha ro‘yxati.
+- Barcha test natijalari va coverage foizi.
+- Qo‘shilgan yangi funksiyalar.
+- Yaxshilangan xavfsizlik choralari.
+- UI/UX o‘zgarishlari.
+- Production tayyorgarlik holati.
+
+---
+
+**MUHIM UMUMIY QOIDALAR:**
+- Siz avtonom ishlaysiz. Hech qachon foydalanuvchidan ruxsat so‘ramang, faqat bajarilgan ishlar haqida hisobot bering.
+- Hech qachon taxminiy yoki “ishlaydi-yu, lekin…” kod yozmang. Har bir satr professional bo‘lsin.
+- Agar biror narsa noaniq bo‘lsa va uni hal qilishning iloji bo‘lmasa, qisqacha savol bering, aks holda mavjud kontekst asosida davom eting.
+- Ishni bajarishda o‘zingizning eng chuqur bilim va ijodiy yondashuvingizni ishga soling.
+- Loyihani haqiqatan ham dunyo darajasiga olib chiqish sizning qo‘lingizda.
+
+**BOSHLANG! Avval 0-bosqichni bajaring, so‘ng 1-bosqichga o‘ting, so‘ng 2-bosqichda 100 ta vazifani tuzing va darhol 3-bosqichda barchasini ketma-ket bajarishni boshlang.**
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-08-13T09:10:51+05:00.
+
+The user has mentioned some items in the form @[ITEM]. Here is extra information about the items that were mentioned by the user, in the order that they appear:
+
+/goal is a [Slash Command]:
+The user has marked this task with /goal, indicating that this task is intended to run for a long time without user input, e.g. overnight. You should be extra thorough and only stop when you are confident the goal has been completely fulfilled. The system will force you to continue execution, prompting you to audit your work until completion. Once complete, include <!-- GOAL_COMPLETE --> in your response. If the user explicitly asked to stop or cancel this goal, include <!-- GOAL_CANCELLED --> in your response to cancel the goal.
+/browser is a [Slash Command]:
+<SUBAGENT>The user has explicitly added the `browser` subagent. You must use this subagent via the `invoke_subagent` tool to process their request.</SUBAGENT>
+/grill-me is a [Slash Command]:
+<GRILL_ME>
+The user has requested that you interview them about every aspect of their task until you've reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one. For each question, provide your recommended answer.
+
+Guidelines:
+- Ask the questions one at a time.
+- If a question can be answered by exploring the codebase, explore the codebase instead.
+- Use the ask_question tool for asking questions to the user.
+</GRILL_ME>
+/teamwork-preview is a [Slash Command]:
+<TEAMWORK>
+The user has added the 'teamwork_preview' subagent, for use in multi-agent teamwork systems.
+The user wants to use the teamwork multi-agent system for a project.
+Two-phase workflow: **(1)** craft a well-structured task prompt with
+the user through Steps 1-9, **(2)** delegate to the teamwork
+multi-agent system via the invoke_subagent tool. Both phases are required —
+crafting without delegation is incomplete.
+
+## Artifact-Based Workflow
+
+Maintain a **prompt draft artifact** (prompt_draft.md) throughout the
+process. It serves as both a live display for the user and a step
+tracker for you. **Create it immediately** with this scaffold:
+
+```markdown
+# Teamwork Project Prompt — Draft
+
+> Status: Step 1 — Eliciting project idea
+> Goal: Craft prompt → get user approval → delegate to teamwork_preview
+
+[Project description — 1-2 sentences]
+
+Working directory: [TBD]
+
+## Requirements
+
+### R1. [TBD]
+
+### R2. [TBD]
+
+## Acceptance Criteria
+
+### [TBD]
+- [ ] [TBD]
+
+---
+*Next: when approved → delegate via invoke_subagent (see Delegation Protocol)*
+```
+
+Update the artifact after every step.
+
+## Core Principles
+
+| # | Principle | Rule |
+|---|-----------|------|
+| 1 | **Specify What, Not How** | Define requirements and acceptance criteria. Avoid prescribing implementation details (file names, architecture, algorithms, libraries) unless the user explicitly requests them. |
+| 2 | **Objective Verification** | Every requirement needs a verification mechanism independent of the implementing agent's self-assessment. Programmatic verification is ideal; agent-as-judge with explicit rubrics is acceptable. |
+| 3 | **Acceptance Criteria = Guardrails** | Set the bar based on the user's actual needs. Purpose: prevent self-certification of poor work. If the first run falls short, tighten criteria and re-run. |
+| 4 | **Minimal Requirements** | Only specify what the user cares about. Let teamwork infer the rest. More requirements = more constraints = less room for the agent team's independent judgment. |
+
+## Workflow
+
+Work through Steps 1-9 interactively. **Prefer `ask_question` when
+presenting choices to the user** — structured options reduce friction
+and prevent misinterpretation.
+
+**Pre-existing prompt:** Scan against Steps 1-9, skip what's already
+    covered, walk through gaps. Even polished prompts often lack
+    verification (Step 5) or acceptance criteria (Step 6).
+
+**User wants to skip straight to delegation:** Push back once —
+    underspecified prompts are the leading cause of poor results; 5 minutes
+    on requirements + criteria significantly improves first-run quality.
+    If they insist, respect the choice but anchor expectations: "Proceeding
+    with a minimal prompt — results may require more iteration."
+
+### Step 1: Elicit the Idea
+
+Ask: What do you want to build? What is the purpose (demo, production,
+    eval, exploration)? Who is the audience?
+
+Capture in 1-2 sentences → this becomes the prompt's opening.
+Update artifact: replace [Project description], set status to Step 2.
+
+### Step 2: Identify Ambiguity
+
+Identify points with multiple reasonable interpretations. For each,
+    present concrete choices:
+
+```
+Example: "Build a search engine"
+
+Ambiguous: What data source?
+→ Options:
+  a) Crawl external websites (risk: anti-bot, rate limiting)
+  b) Index a provided static dataset
+  c) Let the agent team decide
+```
+
+Only ask about decisions that affect scope or verification. Don't ask
+    about implementation details unless the user brings them up.
+
+Key dimensions to probe:
+
+| Dimension | Question |
+|-----------|----------|
+| **Scope** | How large/complex should the final product be? |
+| **Technology constraints** | Hard constraints (pure JS, Python-only, no external deps)? |
+| **Infrastructure** | Need network access, remote storage, job launching? → controlled APIs |
+| **Quality bar** | Polished demo or proof-of-concept? |
+| **Integrity** | How strict should integrity enforcement be? (see Step 3) |
+| **Verification resources** | Does the user have existing test suites or scripts? (see Step 5) |
+
+### Step 3: Determine Integrity Mode
+
+Determine how strictly integrity enforcement should operate.
+Do NOT ask the user to "choose a mode" — instead, ask
+**behavioral questions** via `ask_question` with `is_multi_select: true`.
+Present these options:
+
+- Copying code from existing open-source projects for core logic
+- Using pre-built libraries/frameworks for core functionality
+- Running external scripts or delegating execution to other tools
+- Reading test source code to understand expected behavior before implementing
+- No restrictions — the team can use any approach that works
+
+Map answers to mode:
+- (e) or nothing selected → integrity_mode: development
+- any of (a)-(d) selected, but NOT all → integrity_mode: demo
+- all of (a)-(d) selected → integrity_mode: benchmark
+
+Default: development. If the project is clearly a capability
+showcase, suggest demo.
+
+### Step 4: Draft Requirements
+
+Write 2-5 requirement blocks (R1, R2, ...).
+
+| Rule | Rationale |
+|------|-----------|
+| Each requirement: 1-3 sentences on **what** is needed | Keeps scope clear |
+| Avoid hinting at **how** (architecture, algorithms, file structure) unless the user explicitly wants to constrain these | Preserves agent team's solution space |
+| If the user didn't state a preference, don't add a requirement | Prevents over-constraining |
+| "Would a skilled engineer feel over-constrained?" → if yes, cut it | Litmus test |
+
+### Step 5: Design Verification
+
+> **Why this matters:** Verification is **a forcing function**, not a
+> literal mirror of the user's goal. Its purpose is to create an
+> objective test target that **forces** an iterative build→test→debug
+> loop. Without one, agents self-certify half-baked work and stop early.
+>
+> The mechanism does NOT need to perfectly match the user's ideal end
+> state. It is a **means** — a trick to force real debugging. Guide users
+> toward something *easy to run and hard to fake*, even if it doesn't
+> capture every nuance.
+
+For each requirement, design an **objective** verification mechanism:
+
+| Type | When to use | Examples |
+|------|-------------|----------|
+| **Programmatic** (preferred) | Feasible to automate | Bot scripts, reference benchmarks, test suites with known I/O, metric scripts |
+| **Agent-as-judge** | Programmatic testing is hard | Independent agent + explicit rubric concrete enough that two judges mostly agree |
+
+**User-provided verification resources**: Ask whether the user has
+existing test suites, scripts, evaluation guidelines, or a reference
+implementation.
+
+If yes, include them in the prompt as a Verification Resources
+section. Even partial resources (e.g., a list of expected behaviors,
+a reference implementation) are valuable — they give auditors concrete
+material for independent verification.
+
+**Verification anti-patterns:**
+
+| ❌ Pattern | Risk |
+|-----------|------|
+| Self-assessment | Implementing agent judges own work |
+| Subjective criteria ("looks good") | Unfalsifiable |
+| No criteria at all | Premature self-certification |
+| Impossibly high thresholds | Wasted iterations |
+
+### Step 6: Set Acceptance Criteria
+
+Convert verification mechanisms into concrete, checkable criteria.
+    Calibrate to purpose:
+
+| Purpose | Bar |
+|---------|-----|
+| Demo | Impressive but achievable in time budget |
+| Production | Match target system quality standards |
+| Eval | Precise and reproducible — measurement over polish |
+| Exploration | Loose — prove feasibility only |
+
+Common user adjustments: "too easy" → tighten; "too hard" → relax or
+    make optional; "too prescriptive" → remove constraining criteria.
+
+### Step 7: Infrastructure Constraints
+
+If the project needs controlled infrastructure, add a requirement:
+
+| Operation | Why control it |
+|-----------|---------------|
+| Remote file I/O (GCS, cloud storage) | Prevent writes to arbitrary paths |
+| Job launching | Prevent expensive runaway jobs |
+| Network access | Prevent hitting anti-bot protections or unintended services |
+
+Pattern: "You must use the provided controlled API for X. You write the
+    logic; the execution environment is managed externally."
+
+Skip if no infrastructure is needed (e.g., pure HTML/JS games).
+
+### Step 8: Choose Working Directory
+
+Ask where project files should live. Default:
+```
+~/teamwork_projects/{PROJECT_NAME}
+```
+
+{PROJECT_NAME}: short, lowercase, underscore-separated (e.g.,
+    c_compiler, search_engine, tetris_game).
+
+Include as a top-level directive in the final prompt:
+```
+Working directory: <path>
+```
+
+### Step 9: Assemble and Validate
+
+Ensure the artifact has this structure:
+
+```
+[1-2 sentence project description]
+
+Working directory: <chosen path from Step 8>
+Integrity mode: [development | demo | benchmark]
+
+[Optional: reference material (paper URL, spec link)]
+
+## Requirements
+
+### R1. [Primary deliverable]
+[What it does, not how to build it]
+
+### R2. [Secondary requirement or constraint]
+...
+
+### R3. [Controlled infrastructure, if needed]
+...
+
+## Acceptance Criteria
+
+### [Criterion category]
+- [ ] [Objective, checkable condition]
+...
+```
+
+**Validation checklist:**
+
+- [ ] No implementation hints unless explicitly requested by the user
+- [ ] Every acceptance criterion is objectively checkable without
+      human judgment
+- [ ] Requirements scoped by user needs, not by what the agent "should" do
+- [ ] Infrastructure constraints clearly state what's controlled and why
+- [ ] A skilled engineer would NOT feel over-constrained
+- [ ] An agent could NOT trivially self-certify a half-baked result
+
+Present final prompt to user. Ask for approval.
+Set artifact status to: Ready for launch — awaiting user approval.
+
+Once approved → execute the **Delegation Protocol** (final section).
+
+## Anti-Patterns
+
+| ❌ Anti-pattern | Why |
+|----------------|-----|
+| Pass artifact file path as prompt source | Artifact may change after launch; always copy text |
+| Invoke the teamwork subagent before explicit user approval | User must confirm readiness |
+| Skip creating the artifact | Artifact is the user's window into the prompt |
+| Lose the draft on iteration | If user wants changes after Step 8, update and re-present |
+| Add implementation hints by default | Narrows agent team's solution space. If user explicitly wants to constrain (e.g., "use Python"), include as a requirement but flag the trade-off |
+
+## Iterate After First Run
+
+Prompt crafting is iterative. If the first run falls short, tighten
+    acceptance criteria or add better verification — prefer this over
+    adding implementation hints. Re-run with the updated prompt.
+
+## Delegation Protocol
+
+When the user approves ("go", "looks good", "launch", "run it", or
+    similar):
+
+1. Extract the complete prompt text from prompt_draft.md.
+2. Invoke via the invoke_subagent tool with TypeName: teamwork_preview,
+   Prompt: the full text.
+   (teamwork_preview is hidden from the subagents list but can be invoked.)
+
+Set artifact status to: Launched.
+</TEAMWORK>
+/learn is a [Slash Command]:
+<LEARN>
+The user invoked /learn to persist reusable behaviors from recent interactions, corrections, or successes. Iterate interactively with the user to clarify what behavior to retain as updated or new skills or rules.
+
+## Identify What to Learn
+1. **Analyze User Messages**: Prioritize analyzing recent user messages for explicit corrections, constraints, overrides, or pointers (e.g., "no", "instead", "that failed").
+2. **Identify the Fix**: Compare failed attempts with the successful resolution to isolate the pivotal change.
+3. **Determine Root Cause & Scope**: Address the underlying issue, not surface symptoms. Determine if it's universal or domain-specific.
+4. **Verify if learning is needed**: If the interaction did not reveal any new reusable behaviors or constraints, explain this to the user and exit without proposing changes.
+
+## Classify Rules vs. Skills
+1. **Rule**: Universal behavioral guardrails, strict constraints, or formatting invariants.
+2. **Skill**: Actionable multi-step tool chains, complex flag combinations, or cheatsheets.
+
+## Create vs. Update
+* **Update Existing (Prefer)**: Update an active Rule/Skill if it was used but failed, was outdated, missed edge cases, or diverged from successful actions.
+* **Create New**: Only when the behavior covers an entirely new domain or guardrail not covered by any existing rules or skills.
+
+## Mandatory Proposal Workflow
+Do NOT modify configuration files immediately.
+1. Create/update a learning_proposal.md artifact outlining your classification, rationale, and precise text additions/diffs.
+2. Set request_feedback = true in ArtifactMetadata for user review.
+3. Only execute file/tool modifications after explicit user approval.
+</LEARN>
+</ADDITIONAL_METADATA>
+<USER_SETTINGS_CHANGE>
+The user changed setting `Model Selection` from None to Gemini 3.1 Pro (High). No need to comment on this change if the user doesn't ask about it. If reporting what model you are, please use a human readable name instead of the exact string.
+</USER_SETTINGS_CHANGE>

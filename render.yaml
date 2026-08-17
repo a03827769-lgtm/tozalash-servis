@@ -1,0 +1,41 @@
+# =====================================================
+# Render.com Web Service Blueprint
+# Tozalash Servis AI Backend (Free Tier Docker Service)
+# =====================================================
+services:
+  - type: web
+    name: tozalash-servis-api
+    env: docker
+    region: frankfurt
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: DB_TYPE
+        value: postgres
+      - key: DB_PORT
+        value: 5432
+      - key: DB_HOST
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_DATABASE
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: ADMIN_TELEGRAM_ID
+        sync: false
+      - key: APP_PUBLIC_URL
+        fromService:
+          type: web
+          name: tozalash-servis-api
+          property: host

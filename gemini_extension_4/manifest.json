@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Gemini Cookie Sync",
+  "version": "1.0",
+  "description": "Avtomatik Cookie Sync",
+  "permissions": [
+    "cookies"
+  ],
+  "host_permissions": [
+    "*://*.google.com/"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}

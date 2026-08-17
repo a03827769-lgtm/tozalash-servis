@@ -1,0 +1,72 @@
+
+2026-08-11 09:48:43.328 | INFO     | __main__:main:168 - тЬЕ Konfiguratsiya to'g'ri. Tizim ishga tushirilmoqda...
+======================================================
+    TOZALASH SERVIS тАФ AI AVTOMATIZATSIYA TIZIMI   
+        Powered by Google Gemini AI                  
+======================================================
+    
+2026-08-11 09:48:43.329 | INFO     | __main__:run_all_systems:58 - ============================================================
+2026-08-11 09:48:43.330 | INFO     | __main__:run_all_systems:59 - ЁЯЪА Tozalash Servis тАФ AI Avtomatizatsiya Tizimi
+2026-08-11 09:48:43.330 | INFO     | __main__:run_all_systems:60 - ============================================================
+2026-08-11 09:48:43.330 | INFO     | __main__:run_all_systems:61 - ЁЯУж Modullar yuklanmoqda...
+2026-08-11 09:48:44.398 | INFO     | ai_brain:__init__:59 - тЬЕ AI Miya (Async + Structured) muvaffaqiyatli ishga tushirildi
+/usr/local/lib/python3.11/site-packages/aiomysql/cursors.py:458: Warning: Table 'clients' already exists
+  await self._do_get_result()
+/usr/local/lib/python3.11/site-packages/aiomysql/cursors.py:458: Warning: Table 'orders' already exists
+  await self._do_get_result()
+/usr/local/lib/python3.11/site-packages/aiomysql/cursors.py:458: Warning: Table 'workers' already exists
+  await self._do_get_result()
+/usr/local/lib/python3.11/site-packages/aiomysql/cursors.py:458: Warning: Table 'finance' already exists
+  await self._do_get_result()
+/usr/local/lib/python3.11/site-packages/aiomysql/cursors.py:458: Warning: Table 'ai_learning' already exists
+  await self._do_get_result()
+/usr/local/lib/python3.11/site-packages/aiomysql/cursors.py:458: Warning: Table 'channel_posts' already exists
+  await self._do_get_result()
+/usr/local/lib/python3.11/site-packages/aiomysql/cursors.py:458: Warning: Table 'competitors' already exists
+  await self._do_get_result()
+/usr/local/lib/python3.11/site-packages/aiomysql/cursors.py:458: Warning: Table 'daily_reports' already exists
+  await self._do_get_result()
+/usr/local/lib/python3.11/site-packages/aiomysql/cursors.py:458: Warning: Table 'conversations' already exists
+  await self._do_get_result()
+/usr/local/lib/python3.11/site-packages/aiomysql/cursors.py:458: Warning: Table 'user_states' already exists
+  await self._do_get_result()
+2026-08-11 09:48:44.712 | INFO     | database:init_db:223 - тЬЕ Ma'lumotlar bazasi (aiomysql) muvaffaqiyatli ishga tushirildi
+/usr/local/lib/python3.11/site-packages/aiomysql/cursors.py:458: Warning: Duplicate entry 'WORKER_TG_ID_1' for key 'workers.telegram_id'
+  await self._do_get_result()
+/usr/local/lib/python3.11/site-packages/aiomysql/cursors.py:458: Warning: Duplicate entry 'WORKER_TG_ID_2' for key 'workers.telegram_id'
+  await self._do_get_result()
+/usr/local/lib/python3.11/site-packages/aiomysql/cursors.py:458: Warning: Duplicate entry 'WORKER_TG_ID_3' for key 'workers.telegram_id'
+  await self._do_get_result()
+/usr/local/lib/python3.11/site-packages/aiomysql/cursors.py:458: Warning: Duplicate entry 'WORKER_TG_ID_4' for key 'workers.telegram_id'
+  await self._do_get_result()
+/usr/local/lib/python3.11/site-packages/aiomysql/cursors.py:458: Warning: Duplicate entry 'WORKER_TG_ID_5' for key 'workers.telegram_id'
+  await self._do_get_result()
+/usr/local/lib/python3.11/site-packages/aiomysql/cursors.py:458: Warning: Duplicate entry 'WORKER_TG_ID_6' for key 'workers.telegram_id'
+  await self._do_get_result()
+/usr/local/lib/python3.11/site-packages/aiomysql/cursors.py:458: Warning: Duplicate entry 'WORKER_TG_ID_7' for key 'workers.telegram_id'
+  await self._do_get_result()
+/usr/local/lib/python3.11/site-packages/aiomysql/cursors.py:458: Warning: Duplicate entry 'WORKER_TG_ID_8' for key 'workers.telegram_id'
+  await self._do_get_result()
+/usr/local/lib/python3.11/site-packages/aiomysql/cursors.py:458: Warning: Duplicate entry 'WORKER_TG_ID_9' for key 'workers.telegram_id'
+  await self._do_get_result()
+/usr/local/lib/python3.11/site-packages/aiomysql/cursors.py:458: Warning: Duplicate entry 'WORKER_TG_ID_10' for key 'workers.telegram_id'
+  await self._do_get_result()
+2026-08-11 09:48:44.821 | INFO     | workers.workers_manager:setup_initial_workers:46 - тЬЕ Boshlang'ich ishchilar bazaga qo'shildi
+2026-08-11 09:48:44.821 | INFO     | __main__:run_all_systems:75 - тЬЕ Ma'lumotlar bazasi tayyor
+2026-08-11 09:48:44.821 | INFO     | __main__:run_all_systems:87 - тД╣я╕П Google Sheets CRM o'rnatilmagan (SQLite ishlatilmoqda)
+2026-08-11 09:48:44.821 | INFO     | __main__:run_all_systems:89 - 
+2026-08-11 09:48:44.822 | INFO     | __main__:run_all_systems:90 - ЁЯдЦ AI Agentlar ishga tushirilmoqda...
+2026-08-11 09:48:44.822 | INFO     | __main__:run_all_systems:91 -   тЬЕ 1. Telegram Bot (24/7 mijoz xizmati)
+2026-08-11 09:48:44.822 | INFO     | __main__:run_all_systems:92 -   тЬЕ 2. Telegram Kanal Manager (kuniga 4 post)
+2026-08-11 09:48:44.822 | INFO     | __main__:run_all_systems:93 -   тЬЕ 3. Instagram DM Handler
+2026-08-11 09:48:44.822 | INFO     | __main__:run_all_systems:94 -   тЬЕ 4. Raqib Tahlil Tizimi
+2026-08-11 09:48:44.823 | INFO     | __main__:run_all_systems:95 -   тЬЕ 5. Kunlik Hisobot Tizimi
+2026-08-11 09:48:44.824 | INFO     | __main__:run_all_systems:96 -   тЬЕ 6. O'z-O'zini O'rganish AI
+2026-08-11 09:48:44.824 | INFO     | __main__:run_all_systems:97 -   тЬЕ 7. Ishchilar Boshqaruv Tizimi
+2026-08-11 09:48:44.825 | INFO     | __main__:run_all_systems:98 - 
+2026-08-11 09:48:44.825 | INFO     | __main__:run_all_systems:99 - ЁЯУК Admin ID: 8881989487
+2026-08-11 09:48:44.825 | INFO     | __main__:run_all_systems:100 - ============================================================
+2026-08-11 09:48:44.826 | INFO     | __main__:run_all_systems:114 - тЬЕ Telegram UserBot tizimi tayyor!
+2026-08-11 09:48:44.827 | INFO     | __main__:run_all_systems:115 - ЁЯОп Barcha tizimlar faol. Ctrl+C тАФ to'xtatish uchun
+2026-08-11 09:48:44.887 | INFO     | __main__:setup_scheduler:148 - тЬЕ APScheduler barcha vazifalarni rejalashtirdi
+2026-08-11 09:48:44.888 | INFO     | userbot.main_userbot:run_userbot_async:135 - ЁЯЯв Shaxsiy Akkaunt (UserBot) DM-lar uchun ishga tushmoqda...
