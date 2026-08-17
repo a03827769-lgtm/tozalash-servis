@@ -14,8 +14,15 @@ from pathlib import Path
 from typing import Optional, List
 from loguru import logger
 
-# Coqui TTS litsenziyasini avtomatik qabul qilish
+# Coqui TTS litsenziyasini avtomatik qabul qilish va UTF-8 konsolni sozlash
 os.environ["COQUI_TOS_AGREED"] = "1"
+os.environ["PYTHONIOENCODING"] = "utf-8"
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 # Loyiha papkasini Python path'ga qo'shish
 PROJECT_ROOT = Path(__file__).parent.resolve()
@@ -71,7 +78,7 @@ logger.configure(patcher=mask_pii)
 
 # Loguru sozlash
 logger.remove()  # Standart konsol loggerni tozalash
-logger.add(sys.stdout, serialize=False, level=LOG_LEVEL, enqueue=True)
+logger.add(lambda msg: print(msg, end="", flush=True), serialize=False, level=LOG_LEVEL)
 
 logger.add(
     LOGS_DIR / "bot_{time}.log",

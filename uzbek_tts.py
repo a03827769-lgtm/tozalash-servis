@@ -138,8 +138,9 @@ async def generate_uzbek_voice(text: str, output_path: str, speed: float = 1.0) 
 
         # Keshga saqlab qo'yish
         if os.path.exists(output_path) and os.path.getsize(output_path) > 500:
-            import shutil
-            await asyncio.to_thread(shutil.copyfile, output_path, str(cache_file))
+            if os.path.abspath(output_path) != os.path.abspath(str(cache_file)):
+                import shutil
+                await asyncio.to_thread(shutil.copyfile, output_path, str(cache_file))
             logger.success(f"✅ Edge-TTS audio generatsiya qilindi: {output_path}")
             return True
     except Exception as e:
