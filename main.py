@@ -51,7 +51,6 @@ from voice_agent import voice_agent
 from iot_manager import iot_manager
 from bigdata_predictor import big_data, pricing_engine
 from enterprise_b2b import b2b_manager, profit_analytics
-from bot.telegram_bot import run_bot_async
 from scheduler_manager import start_scheduler
 from keepalive_worker import start_keepalive_worker
 
@@ -178,11 +177,7 @@ async def run_all_systems():
     server_task = asyncio.create_task(server.serve(), name="uvicorn_server")
     tasks.append(server_task)
 
-    # Telegram Bot vazifasi
-    bot_task = asyncio.create_task(run_bot_async(), name="telegram_bot")
-    tasks.append(bot_task)
-
-    # Telegram UserBot vazifasi
+    # Telegram UserBot vazifasi (Avtomatlashtirilgan DM & Outreach)
     userbot_task = asyncio.create_task(run_userbot_async(), name="telegram_userbot")
     tasks.append(userbot_task)
 
@@ -212,13 +207,14 @@ async def run_all_systems():
 
     logger.info("🤖 Barcha AI Agentlar va xizmatlar ishga tushirildi:")
     logger.info(f"  ✅ 1. FastAPI Uvicorn Server (Port {port}, REST API, GraphQL, WebSockets, /health)")
-    logger.info("  ✅ 2. Telegram Mijoz Boti (24/7 Polling)")
-    logger.info("  ✅ 3. Telegram UserBot (Avtomatlashtirilgan DM)")
+    logger.info("  ✅ 2. Telegram Mini App (TMA 2.0 WebApp)")
+    logger.info("  ✅ 3. Telegram UserBot (Avtomatlashtirilgan DM & Outreach)")
     logger.info("  ✅ 4. APScheduler (Kontent, Tahlil, P&L, Arxiv)")
     logger.info("  ✅ 5. TTS Audio Queue Worker")
     logger.info("  ✅ 6. 24/7 Keepalive Self-Pinger Worker")
     logger.info(f"📊 Admin ID: {ADMIN_TELEGRAM_ID}")
     logger.info("=" * 60)
+
 
     # 5. Graceful Shutdown Signal Handlerlari (POSIX va Windows fallback)
     async def graceful_shutdown(sig_name: Optional[str] = None):

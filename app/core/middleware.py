@@ -17,16 +17,26 @@ from app.core.redis_manager import redis_manager
 
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
-    """OWASP xavfsizlik sarlavhalarini har bir HTTP javobiga qo'shish"""
+    """OWASP xavfsizlik sarlavhalari (Telegram Mini App iframe moslashuvchanligi bilan)"""
     async def dispatch(self, request: Request, call_next):
         response = await call_next(request)
         response.headers["X-Content-Type-Options"] = "nosniff"
-        response.headers["X-Frame-Options"] = "DENY"
         response.headers["X-XSS-Protection"] = "1; mode=block"
         response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-        response.headers["X-Permitted-Cross-Domain-Policies"] = "none"
+        
+        # Telegram WebApp iframe ichida ochilishi uchun frame-ancestors ni ochamiz
+        path = request.url.path
+        if path.startswith("/tma") or path.startswith("/app") or path.startswith("/static"):
+            response.headers["Content-Security-Policy"] = "frame-ancestors 'self' https://web.telegram.org https://*.telegram.org https://telegram.org;"
+            # X-Frame-Options ni o'chirib tashlaymiz yoki ALLOWALL qilamiz
+            if "x-frame-options" in response.headers:
+                del response.headers["x-frame-options"]
+        else:
+            response.headers["X-Frame-Options"] = "SAMEORIGIN"
+            
         return response
+
 
 
 class ServerTimingMiddleware(BaseHTTPMiddleware):
