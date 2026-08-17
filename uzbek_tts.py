@@ -68,28 +68,13 @@ def number_to_uzbek_words(num: int) -> str:
     return " ".join(parts).strip()
 
 
+from uzbek_phonetics import normalize_uzbek_speech_text
+
+
 def normalize_uzbek_text_for_tts(text: str) -> str:
-    """Matnni TTS uchun tozalash va tayyorlash"""
-    # 1. Emoji va maxsus belgilarni tozalash
-    cleaned = re.sub(r"[^\w\s\.,!\?'-]", " ", text)
+    """Matnni TTS uchun tozalash va to'liq fonetik normalizatsiya qilish"""
+    return normalize_uzbek_speech_text(text)
 
-    # 2. Narxlar va raqamlarni so'zga aylantirish: "500 000 so'm" -> "besh yuz ming so'm"
-    def replace_number(match):
-        num_str = match.group(0).replace(" ", "").replace(",", "")
-        try:
-            num = int(num_str)
-            return number_to_uzbek_words(num)
-        except Exception:
-            return match.group(0)
-
-    cleaned = re.sub(r"\b\d{1,3}(?: \d{3})*\b|\b\d+\b", replace_number, cleaned)
-    
-    # 3. Qisqartmalarni to'g'rilash
-    cleaned = cleaned.replace("kv.m", "kvadrat metr")
-    cleaned = cleaned.replace("ta'mirdan", "tamirdan")
-    cleaned = cleaned.replace("so'm", "so'm")
-    
-    return re.sub(r"\s+", " ", cleaned).strip()
 
 
 def _get_cache_path(text: str) -> Path:

@@ -1,11 +1,20 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+import os
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
 from bot.i18n import i18n
+
+TMA_URL = os.getenv("TMA_URL", "https://awards-walls-shareware-sensor.trycloudflare.com/tma")
 
 
 def get_main_menu(lang: str = "uz") -> InlineKeyboardMarkup:
-    """Asosiy menyu (I18N)"""
+    """Asosiy menyu (I18N + Telegram Mini App)"""
     return InlineKeyboardMarkup(
         [
+            [
+                InlineKeyboardButton(
+                    "✨ Interaktiv Mini Ilova (TMA 2.0) 📱",
+                    web_app=WebAppInfo(url=TMA_URL)
+                )
+            ],
             [
                 InlineKeyboardButton(
                     i18n.get("btn_order", lang), callback_data="order_start"
@@ -14,6 +23,7 @@ def get_main_menu(lang: str = "uz") -> InlineKeyboardMarkup:
                     i18n.get("btn_prices", lang), callback_data="show_prices"
                 ),
             ],
+
             [
                 InlineKeyboardButton(
                     i18n.get("btn_contact", lang), callback_data="contact"

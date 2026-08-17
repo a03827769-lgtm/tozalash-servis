@@ -14,10 +14,12 @@ from app.api.endpoints import (
     staff,
     clients,
     orders,
+    tma,
 )
 
 api_router = APIRouter()
 
+api_router.include_router(tma.router)
 api_router.include_router(
     telegram_bot.router, prefix="/bot/telegram", tags=["Telegram Bot"]
 )
@@ -43,3 +45,4 @@ api_router.include_router(payment.router, prefix="/payment", tags=["Payment Webh
 api_router.include_router(staff.router, prefix="/staff", tags=["Xodimlar"])
 api_router.include_router(clients.router, prefix="/clients", tags=["Mijozlar"])
 api_router.include_router(orders.router, prefix="/orders", tags=["Buyurtmalar"])
+
