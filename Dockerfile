@@ -58,19 +58,21 @@ ENV PORT=8000
 # Copy application source code
 COPY . .
 
-# Security hardening: Create non-root user (UID 10001) and configure directories
-RUN groupadd -g 10001 appgroup && \
-    useradd -u 10001 -g appgroup -s /bin/sh -m appuser && \
+# Hugging Face Spaces & Cloud standard non-root user (UID 1000)
+RUN useradd -m -u 1000 user && \
     mkdir -p /app/data /app/logs /app/data/audio_cache /app/data/downloads && \
-    chown -R appuser:appgroup /app /opt/venv
+    chown -R user:user /app /opt/venv
 
-USER appuser
+USER user
+ENV HOME=/home/user \
+    PATH=/home/user/.local/bin:/opt/venv/bin:$PATH \
+    PORT=7860
 
-EXPOSE 8000
+EXPOSE 7860 8000
 
 # Dynamic port health check with graceful start period
 HEALTHCHECK --interval=20s --timeout=5s --start-period=20s --retries=3 \
-    CMD curl -f http://localhost:${PORT:-8000}/health || exit 1
+    CMD curl -f http://localhost:${PORT:-7860}/health || exit 1
 
 # Launch unified async supervisor
 CMD ["python", "main.py"]
