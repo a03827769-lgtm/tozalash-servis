@@ -1,41 +1,45 @@
 # =====================================================
-# Render.com Web Service Blueprint
-# Tozalash Servis AI Backend (Free Tier Docker Service)
+# Render.com Web Service Blueprint (100% Free Forever Tier - No Card Required)
+# Tozalash Servis AI Backend & 24/7 Telegram Bot
 # =====================================================
 services:
   - type: web
     name: tozalash-servis-api
-    env: docker
+    env: python
     region: frankfurt
     plan: free
-    dockerfilePath: ./Dockerfile
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt && pip install -r requirements_phase2.txt
+    startCommand: python main.py
     healthCheckPath: /health
     autoDeploy: true
     envVars:
       - key: PORT
         value: 8000
-      - key: DB_TYPE
-        value: postgres
-      - key: DB_PORT
-        value: 5432
-      - key: DB_HOST
-        sync: false
-      - key: DB_USERNAME
-        sync: false
-      - key: DB_PASSWORD
-        sync: false
-      - key: DB_DATABASE
-        sync: false
-      - key: REDIS_URL
-        sync: false
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: COQUI_TOS_AGREED
+        value: "1"
       - key: TELEGRAM_BOT_TOKEN
-        sync: false
-      - key: GEMINI_API_KEY
         sync: false
       - key: ADMIN_TELEGRAM_ID
         sync: false
-      - key: APP_PUBLIC_URL
-        fromService:
-          type: web
-          name: tozalash-servis-api
-          property: host
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: BUSINESS_CITY
+        value: Toshkent
+      - key: BUSINESS_NAME
+        value: Tozalash Servis
+      - key: PRICE_REGULAR_CLEANING
+        value: "500000"
+      - key: PRICE_RENOVATION_CLEANING
+        value: "600000"
+      - key: PRICE_SOFA_PER_SEAT
+        value: "80000"
+      - key: PRICE_CHAIR_PER_UNIT
+        value: "50000"
+      - key: PRICE_CARPET_PER_SQM
+        value: "27000"
+      - key: PRICE_FACADE_PER_SQM
+        value: "22000"
+      - key: PRICE_TILE_PER_SQM
+        value: "15000"
